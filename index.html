@@ -13,10 +13,10 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      background: #f9f8f3;
+      background: #57068C;
       padding: 20px;
       min-height: 100vh;
-      color: #2c2c2a;
+      color: #ffffff;
     }
 
     .container {
@@ -28,7 +28,7 @@
       font-size: 28px;
       font-weight: 500;
       margin-bottom: 24px;
-      color: #2c2c2a;
+      color: #ffffff;
     }
 
     .input-grid {
@@ -45,7 +45,7 @@
 
     label {
       font-size: 13px;
-      color: #888780;
+      color: #E6D9F2;
       margin-bottom: 6px;
       font-weight: 500;
     }
@@ -60,8 +60,8 @@
 
     input[type="number"]:focus {
       outline: none;
-      border-color: #185fa5;
-      box-shadow: 0 0 0 2px rgba(24, 95, 165, 0.1);
+      border-color: #57068C;
+      box-shadow: 0 0 0 2px rgba(87, 6, 140, 0.15);
     }
 
     .metrics {
@@ -72,7 +72,7 @@
     }
 
     .metric-card {
-      background: #faf9f5;
+      background: #cfcdc6;
       border-radius: 8px;
       padding: 16px;
       border: 0.5px solid #d3d1c7;
@@ -85,18 +85,18 @@
       background: transparent;
       cursor: pointer;
       font-weight: 500;
-      color: #888780;
+      color: #D9C2EC;
       transition: all 0.15s;
       border-radius: 4px;
     }
 
     .unit-btn.active {
-      background: #faf9f5;
-      color: #2c2c2a;
+      background: #ffffff;
+      color: #000000;
     }
 
     .unit-btn:hover:not(.active) {
-      color: #2c2c2a;
+      color: #000000;
     }
 
     .goal-row {
@@ -120,7 +120,7 @@
     .metric-value {
       font-size: 24px;
       font-weight: 500;
-      color: #2c2c2a;
+      color: #000000;
     }
 
     .goal-section {
@@ -150,7 +150,7 @@
       flex: 1;
       height: 4px;
       border-radius: 2px;
-      background: #d3d1c7;
+      background: #B08FD4;
       outline: none;
       -webkit-appearance: none;
       appearance: none;
@@ -162,20 +162,20 @@
       width: 18px;
       height: 18px;
       border-radius: 50%;
-      background: #185fa5;
+      background: #57068C;
       cursor: pointer;
-      border: 2px solid #f1efe8;
-      box-shadow: 0 0 0 1px #185fa5;
+      border: 2px solid #cfcdc6;
+      box-shadow: 0 0 0 1px #57068C;
     }
 
     input[type="range"]::-moz-range-thumb {
       width: 18px;
       height: 18px;
       border-radius: 50%;
-      background: #185fa5;
+      background: #57068C;
       cursor: pointer;
-      border: 2px solid #f1efe8;
-      box-shadow: 0 0 0 1px #185fa5;
+      border: 2px solid #cfcdc6;
+      box-shadow: 0 0 0 1px #57068C;
     }
 
     .goal-percent {
@@ -183,7 +183,7 @@
       font-weight: 500;
       min-width: 50px;
       text-align: right;
-      color: #2c2c2a;
+      color: #ffffff;
     }
 
     .button-group {
@@ -196,17 +196,17 @@
       flex: 1;
       padding: 8px 12px;
       font-size: 13px;
-      background: #faf9f5;
+      background: #cfcdc6;
       border: 0.5px solid #d3d1c7;
       border-radius: 8px;
       cursor: pointer;
-      color: #2c2c2a;
+      color: #000000;
       font-weight: 500;
       transition: background 0.15s;
     }
 
     .quick-btn:hover {
-      background: #e1dfd6;
+      background: #EFE4F7;
     }
 
     .quick-btn:active {
@@ -214,15 +214,15 @@
     }
 
     .goal-card {
-      background: #e6f1fb;
+      background: #EFE4F7;
       border-radius: 8px;
       padding: 16px;
-      border: 0.5px solid #85b7eb;
+      border: 0.5px solid #B08FD4;
     }
 
     .goal-label {
       font-size: 13px;
-      color: #185fa5;
+      color: #57068C;
       margin-bottom: 6px;
       font-weight: 500;
     }
@@ -230,124 +230,16 @@
     .goal-value {
       font-size: 22px;
       font-weight: 500;
-      color: #185fa5;
+      color: #000000;
     }
 
-    @media (prefers-color-scheme: dark) {
-      body {
-        background: #2c2c2a;
-        color: #f1efe8;
-      }
-
-      h1 {
-        color: #f1efe8;
-      }
-
-      input[type="number"] {
-        background: #404038;
-        border-color: #5f5e5a;
-        color: #f1efe8;
-      }
-
-      input[type="number"]:focus {
-        border-color: #85b7eb;
-      }
-
-      .metric-card {
-        background: #4a4945;
-        border-color: #5f5e5a;
-      }
-
-      .unit-btn {
-        color: #b4b2a9;
-      }
-
-      .unit-btn.active {
-        background: #5f5e5a;
-        color: #f1efe8;
-      }
-
-      .unit-btn:hover:not(.active) {
-        color: #f1efe8;
-      }
-
-      .metric-label {
-        color: #b4b2a9;
-      }
-
-      .metric-value {
-        color: #f1efe8;
-      }
-
-      .goal-header label {
-        color: #b4b2a9;
-      }
-
-      input[type="range"] {
-        background: #5f5e5a;
-      }
-
-      input[type="range"]::-webkit-slider-thumb {
-        background: #85b7eb;
-        box-shadow: 0 0 0 1px #85b7eb;
-      }
-
-      input[type="range"]::-moz-range-thumb {
-        background: #85b7eb;
-        box-shadow: 0 0 0 1px #85b7eb;
-      }
-
-      .goal-percent {
-        color: #f1efe8;
-      }
-
-      .quick-btn {
-        background: #404038;
-        border-color: #5f5e5a;
-        color: #f1efe8;
-      }
-
-      .quick-btn:hover {
-        background: #4f4e49;
-      }
-
-      .goal-card {
-        background: #0c447c;
-        border-color: #378add;
-      }
-
-      .goal-label {
-        color: #85b7eb;
-      }
-
-      .goal-value {
-        color: #85b7eb;
-      }
-
-      input[type="number"] {
-        background: #404038;
-        border-color: #5f5e5a;
-        color: #f1efe8;
-      }
-
-      .timeline-group label {
-        color: #b4b2a9;
-      }
-
-      .goal-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        margin-bottom: 12px;
-      }
-    }
   </style>
 </head>
 <body>
   <div class="container">
     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
       <h1>Weight loss calculator</h1>
-      <div style="display: flex; gap: 8px; background: #faf9f5; border-radius: 6px; padding: 4px;">
+      <div style="display: flex; gap: 8px; background: #3D0463; border-radius: 6px; padding: 4px;">
         <button class="unit-btn active" data-unit="lbs" onclick="switchUnit('lbs')">lbs</button>
         <button class="unit-btn" data-unit="kg" onclick="switchUnit('kg')">kg</button>
       </div>
@@ -403,14 +295,14 @@
 
       <div class="timeline-group" style="margin-top: 12px;">
         <label for="weeks">Weeks to goal</label>
-        <input type="number" id="weeks" placeholder="0" style="padding: 10px 12px; font-size: 16px; border: 0.5px solid #d3d1c7; border-radius: 8px; font-family: inherit;" />
+        <input type="number" id="weeks" placeholder="0" style="padding: 10px 12px; font-size: 16px; border: 0.5px solid #B08FD4; border-radius: 8px; font-family: inherit; background: #ffffff; color: #000000;" />
       </div>
     </div>
 
     <div class="goal-card">
       <div class="goal-label">To reach goal</div>
       <div class="goal-value" id="toLose">—</div>
-      <div style="font-size: 13px; color: rgba(24, 95, 165, 0.7); margin-top: 12px; padding-top: 12px; border-top: 0.5px solid rgba(24, 95, 165, 0.2);" id="weeklyRate"></div>
+      <div style="font-size: 13px; color: rgba(87, 6, 140, 0.75); margin-top: 12px; padding-top: 12px; border-top: 0.5px solid rgba(87, 6, 140, 0.2);" id="weeklyRate"></div>
     </div>
   </div>
 

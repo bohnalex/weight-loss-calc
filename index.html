@@ -72,10 +72,43 @@
     }
 
     .metric-card {
-      background: #f1efe8;
+      background: #faf9f5;
       border-radius: 8px;
       padding: 16px;
       border: 0.5px solid #d3d1c7;
+    }
+
+    .unit-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-weight: 500;
+      color: #888780;
+      transition: all 0.15s;
+      border-radius: 4px;
+    }
+
+    .unit-btn.active {
+      background: #faf9f5;
+      color: #2c2c2a;
+    }
+
+    .unit-btn:hover:not(.active) {
+      color: #2c2c2a;
+    }
+
+    .goal-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .timeline-group {
+      display: flex;
+      flex-direction: column;
     }
 
     .metric-label {
@@ -163,7 +196,7 @@
       flex: 1;
       padding: 8px 12px;
       font-size: 13px;
-      background: #f1efe8;
+      background: #faf9f5;
       border: 0.5px solid #d3d1c7;
       border-radius: 8px;
       cursor: pointer;
@@ -221,8 +254,21 @@
       }
 
       .metric-card {
-        background: #404038;
+        background: #4a4945;
         border-color: #5f5e5a;
+      }
+
+      .unit-btn {
+        color: #b4b2a9;
+      }
+
+      .unit-btn.active {
+        background: #5f5e5a;
+        color: #f1efe8;
+      }
+
+      .unit-btn:hover:not(.active) {
+        color: #f1efe8;
       }
 
       .metric-label {
@@ -277,12 +323,35 @@
       .goal-value {
         color: #85b7eb;
       }
+
+      input[type="number"] {
+        background: #404038;
+        border-color: #5f5e5a;
+        color: #f1efe8;
+      }
+
+      .timeline-group label {
+        color: #b4b2a9;
+      }
+
+      .goal-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Weight loss calculator</h1>
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+      <h1>Weight loss calculator</h1>
+      <div style="display: flex; gap: 8px; background: #faf9f5; border-radius: 6px; padding: 4px;">
+        <button class="unit-btn active" data-unit="lbs" onclick="switchUnit('lbs')">lbs</button>
+        <button class="unit-btn" data-unit="kg" onclick="switchUnit('kg')">kg</button>
+      </div>
+    </div>
 
     <div class="input-grid">
       <div class="input-group">
@@ -309,22 +378,39 @@
     <div class="goal-section">
       <div class="goal-header">
         <label>Goal</label>
-        <div class="goal-slider-group">
-          <input type="range" id="goalSlider" min="5" max="50" value="10" />
-          <span class="goal-percent" id="goalPercent">10%</span>
+      </div>
+
+      <div class="goal-row">
+        <div class="input-group">
+          <label for="goalWeight">Goal weight</label>
+          <input type="number" id="goalWeight" placeholder="0" />
+        </div>
+        <div class="input-group">
+          <label for="goalPercent">Or by % loss</label>
+          <div class="goal-slider-group">
+            <input type="range" id="goalSlider" min="5" max="50" value="10" />
+            <span class="goal-percent" id="goalPercent">10%</span>
+          </div>
         </div>
       </div>
+
       <div class="button-group">
         <button class="quick-btn" onclick="setGoal(5)">5%</button>
         <button class="quick-btn" onclick="setGoal(10)">10%</button>
         <button class="quick-btn" onclick="setGoal(15)">15%</button>
         <button class="quick-btn" onclick="setGoal(20)">20%</button>
       </div>
+
+      <div class="timeline-group" style="margin-top: 12px;">
+        <label for="weeks">Weeks to goal</label>
+        <input type="number" id="weeks" placeholder="0" style="padding: 10px 12px; font-size: 16px; border: 0.5px solid #d3d1c7; border-radius: 8px; font-family: inherit;" />
+      </div>
     </div>
 
     <div class="goal-card">
       <div class="goal-label">To reach goal</div>
       <div class="goal-value" id="toLose">—</div>
+      <div style="font-size: 13px; color: rgba(24, 95, 165, 0.7); margin-top: 12px; padding-top: 12px; border-top: 0.5px solid rgba(24, 95, 165, 0.2);" id="weeklyRate"></div>
     </div>
   </div>
 
@@ -332,39 +418,103 @@
     const startInput = document.getElementById('startWeight');
     const currentInput = document.getElementById('currentWeight');
     const goalSlider = document.getElementById('goalSlider');
+    const goalWeightInput = document.getElementById('goalWeight');
+    const weeksInput = document.getElementById('weeks');
+    let currentUnit = 'lbs';
+
+    function switchUnit(unit) {
+      if (unit === currentUnit) return;
+
+      const factor = unit === 'kg' ? 0.453592 : 2.20462;
+      
+      if (startInput.value) {
+        startInput.value = Math.round(parseFloat(startInput.value) * factor * 10) / 10;
+      }
+      if (currentInput.value) {
+        currentInput.value = Math.round(parseFloat(currentInput.value) * factor * 10) / 10;
+      }
+      if (goalWeightInput.value) {
+        goalWeightInput.value = Math.round(parseFloat(goalWeightInput.value) * factor * 10) / 10;
+      }
+
+      currentUnit = unit;
+      updateUnitLabel();
+      
+      document.querySelectorAll('.unit-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelector(`[data-unit="${unit}"]`).classList.add('active');
+
+      updateCalc();
+    }
+
+    function updateUnitLabel() {
+      document.querySelectorAll('input[type="number"]').forEach(input => {
+        if (input.placeholder && input.placeholder !== '0') {
+          input.placeholder = currentUnit;
+        }
+      });
+    }
 
     function setGoal(value) {
       goalSlider.value = value;
+      goalWeightInput.value = '';
       updateCalc();
     }
 
     function updateCalc() {
       const start = parseFloat(startInput.value);
       const current = parseFloat(currentInput.value);
-      const goal = parseInt(goalSlider.value);
+      const goalPercent = parseInt(goalSlider.value);
+      const goalWeight = parseFloat(goalWeightInput.value);
+      const weeks = parseFloat(weeksInput.value);
 
-      document.getElementById('goalPercent').textContent = goal + '%';
+      document.getElementById('goalPercent').textContent = goalPercent + '%';
 
       if (!start || !current) {
         document.getElementById('weightLost').textContent = '—';
         document.getElementById('percentLost').textContent = '—';
         document.getElementById('toLose').textContent = '—';
+        document.getElementById('weeklyRate').textContent = '';
         return;
       }
 
       const lost = Math.round((start - current) * 10) / 10;
       const pct = Math.round((lost / start) * 1000) / 10;
-      const targetWeight = start * (1 - goal / 100);
-      const remaining = Math.max(0, Math.round((current - targetWeight) * 10) / 10);
 
-      document.getElementById('weightLost').textContent = lost + ' lbs';
+      let remaining = 0;
+      let targetWeight = 0;
+
+      if (goalWeight && goalWeight > 0) {
+        targetWeight = goalWeight;
+        remaining = Math.max(0, Math.round((current - targetWeight) * 10) / 10);
+      } else {
+        targetWeight = start * (1 - goalPercent / 100);
+        remaining = Math.max(0, Math.round((current - targetWeight) * 10) / 10);
+      }
+
+      const unitLabel = currentUnit === 'lbs' ? 'lbs' : 'kg';
+      document.getElementById('weightLost').textContent = lost + ' ' + unitLabel;
       document.getElementById('percentLost').textContent = pct + '%';
-      document.getElementById('toLose').textContent = remaining === 0 ? '✓ Goal reached!' : remaining + ' lbs';
+
+      if (remaining === 0) {
+        document.getElementById('toLose').textContent = '✓ Goal reached!';
+        document.getElementById('weeklyRate').textContent = '';
+      } else {
+        document.getElementById('toLose').textContent = remaining + ' ' + unitLabel;
+        
+        if (weeks && weeks > 0) {
+          const weekly = Math.round((remaining / weeks) * 10) / 10;
+          document.getElementById('weeklyRate').textContent = `${weekly} ${unitLabel}/week`;
+        } else {
+          document.getElementById('weeklyRate').textContent = '';
+        }
+      }
     }
 
     startInput.addEventListener('input', updateCalc);
     currentInput.addEventListener('input', updateCalc);
     goalSlider.addEventListener('input', updateCalc);
+    goalWeightInput.addEventListener('input', updateCalc);
+    weeksInput.addEventListener('input', updateCalc);
   </script>
 </body>
 </html>

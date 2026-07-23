@@ -14,7 +14,7 @@
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       background: #57068C;
-      padding: 20px;
+      padding: 16px;
       min-height: 100vh;
       color: #ffffff;
     }
@@ -25,17 +25,17 @@
     }
 
     h1 {
-      font-size: 28px;
+      font-size: 21px;
       font-weight: 500;
-      margin-bottom: 24px;
+      line-height: 1.15;
       color: #ffffff;
     }
 
     .input-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 24px;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
     }
 
     .input-group {
@@ -44,14 +44,14 @@
     }
 
     label {
-      font-size: 13px;
+      font-size: 12px;
       color: #E6D9F2;
-      margin-bottom: 6px;
+      margin-bottom: 3px;
       font-weight: 500;
     }
 
     input[type="number"] {
-      padding: 10px 12px;
+      padding: 7px 10px;
       font-size: 16px;
       border: 0.5px solid #d3d1c7;
       border-radius: 8px;
@@ -66,20 +66,20 @@
 
     .metrics {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 32px;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
     }
 
     .metric-card {
       background: #cfcdc6;
       border-radius: 8px;
-      padding: 16px;
+      padding: 10px 12px;
       border: 0.5px solid #d3d1c7;
     }
 
     .unit-btn {
-      padding: 6px 12px;
+      padding: 5px 11px;
       font-size: 13px;
       border: none;
       background: transparent;
@@ -101,9 +101,9 @@
 
     .goal-row {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 12px;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 10px;
+      margin-bottom: 10px;
     }
 
     .timeline-group {
@@ -112,26 +112,26 @@
     }
 
     .metric-label {
-      font-size: 13px;
-      color: #888780;
-      margin-bottom: 8px;
+      font-size: 12px;
+      color: #4a4844;
+      margin-bottom: 2px;
     }
 
     .metric-value {
-      font-size: 24px;
+      font-size: 21px;
       font-weight: 500;
       color: #000000;
     }
 
     .goal-section {
-      margin-bottom: 24px;
+      margin-bottom: 10px;
     }
 
     .goal-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 12px;
+      margin-bottom: 6px;
     }
 
     .goal-header label {
@@ -194,7 +194,7 @@
 
     .quick-btn {
       flex: 1;
-      padding: 8px 12px;
+      padding: 6px 8px;
       font-size: 13px;
       background: #cfcdc6;
       border: 0.5px solid #d3d1c7;
@@ -216,19 +216,19 @@
     .goal-card {
       background: #EFE4F7;
       border-radius: 8px;
-      padding: 16px;
+      padding: 10px 12px;
       border: 0.5px solid #B08FD4;
     }
 
     .goal-label {
-      font-size: 13px;
+      font-size: 12px;
       color: #57068C;
-      margin-bottom: 6px;
+      margin-bottom: 2px;
       font-weight: 500;
     }
 
     .goal-value {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 500;
       color: #000000;
     }
@@ -237,9 +237,9 @@
 </head>
 <body>
   <div class="container">
-    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px;">
       <h1>Weight loss calculator</h1>
-      <div style="display: flex; gap: 8px; background: #3D0463; border-radius: 6px; padding: 4px;">
+      <div style="display: flex; gap: 6px; background: #3D0463; border-radius: 6px; padding: 3px; flex-shrink: 0;">
         <button class="unit-btn active" data-unit="lbs" onclick="switchUnit('lbs')">lbs</button>
         <button class="unit-btn" data-unit="kg" onclick="switchUnit('kg')">kg</button>
       </div>
@@ -268,10 +268,6 @@
     </div>
 
     <div class="goal-section">
-      <div class="goal-header">
-        <label>Goal</label>
-      </div>
-
       <div class="goal-row">
         <div class="input-group">
           <label for="goalWeight">Goal weight</label>
@@ -293,16 +289,16 @@
         <button class="quick-btn" onclick="setGoal(20)">20%</button>
       </div>
 
-      <div class="timeline-group" style="margin-top: 12px;">
+      <div class="timeline-group" style="margin-top: 10px;">
         <label for="weeks">Weeks to goal</label>
-        <input type="number" id="weeks" placeholder="0" style="padding: 10px 12px; font-size: 16px; border: 0.5px solid #B08FD4; border-radius: 8px; font-family: inherit; background: #ffffff; color: #000000;" />
+        <input type="number" id="weeks" placeholder="0" style="padding: 7px 10px; font-size: 16px; border: 0.5px solid #B08FD4; border-radius: 8px; font-family: inherit; background: #ffffff; color: #000000;" />
       </div>
     </div>
 
     <div class="goal-card">
       <div class="goal-label">To reach goal</div>
       <div class="goal-value" id="toLose">—</div>
-      <div style="font-size: 13px; color: rgba(87, 6, 140, 0.75); margin-top: 12px; padding-top: 12px; border-top: 0.5px solid rgba(87, 6, 140, 0.2);" id="weeklyRate"></div>
+      <div style="font-size: 13px; color: rgba(87, 6, 140, 0.75); margin-top: 8px; padding-top: 8px; border-top: 0.5px solid rgba(87, 6, 140, 0.2);" id="weeklyRate"></div>
     </div>
   </div>
 

@@ -212,8 +212,16 @@
     <div class="module">
       <div class="module-title">1 · Set goal</div>
 
-      <label for="startWeight">Starting weight</label>
-      <input type="number" id="startWeight" inputmode="decimal" placeholder="lbs" />
+      <div class="row2">
+        <div>
+          <label for="startWeight">Starting weight</label>
+          <input type="number" id="startWeight" inputmode="decimal" placeholder="lbs" />
+        </div>
+        <div>
+          <label for="targetWeight">Target weight</label>
+          <input type="number" id="targetWeight" inputmode="decimal" placeholder="lbs" />
+        </div>
+      </div>
 
       <div class="button-group">
         <button class="quick-btn" data-pct="5" onclick="setGoal(5)">5%</button>
@@ -228,11 +236,7 @@
       </div>
 
       <div class="cards2">
-        <div class="card card-primary">
-          <div class="card-label">Target weight</div>
-          <div class="card-value" id="targetWeight">—</div>
-        </div>
-        <div class="card card-primary">
+        <div class="card card-primary" style="grid-column: 1 / -1;">
           <div class="card-label">Total to lose</div>
           <div class="card-value" id="totalToLose">—</div>
         </div>
@@ -278,6 +282,7 @@
 
   <script>
     var startInput   = document.getElementById('startWeight');
+    var targetInput  = document.getElementById('targetWeight');
     var currentInput = document.getElementById('currentWeight');
     var weeksInput   = document.getElementById('weeks');
     var goalSlider   = document.getElementById('goalSlider');
@@ -289,11 +294,12 @@
     function switchUnit(unit) {
       if (unit === currentUnit) return;
       var f = unit === 'kg' ? 0.453592 : 2.20462;
-      [startInput, currentInput].forEach(function (el) {
+      [startInput, targetInput, currentInput].forEach(function (el) {
         if (el.value !== '') el.value = r1(parseFloat(el.value) * f);
       });
       currentUnit = unit;
       startInput.placeholder = unit;
+      targetInput.placeholder = unit;
       currentInput.placeholder = unit;
       var btns = document.querySelectorAll('.unit-btn');
       for (var i = 0; i < btns.length; i++) {
@@ -302,9 +308,28 @@
       update();
     }
 
+    // percentage -> target weight
+    function applyPercent() {
+      var start = parseFloat(startInput.value);
+      var pct = parseInt(goalSlider.value, 10);
+      if (start > 0) targetInput.value = r1(start * (1 - pct / 100));
+      update();
+    }
+
+    // target weight -> percentage (clamped to slider range)
+    function applyTarget() {
+      var start = parseFloat(startInput.value);
+      var target = parseFloat(targetInput.value);
+      if (start > 0 && target > 0 && target < start) {
+        var pct = (start - target) / start * 100;
+        goalSlider.value = Math.min(50, Math.max(1, Math.round(pct)));
+      }
+      update();
+    }
+
     function setGoal(v) {
       goalSlider.value = v;
-      update();
+      applyPercent();
     }
 
     function syncQuickButtons(pct) {
@@ -320,10 +345,9 @@
       var weeks = parseFloat(weeksInput.value);
       var pct = parseInt(goalSlider.value, 10);
 
-      document.getElementById('goalPercent').textContent = pct + '%';
+      var pctOut = document.getElementById('goalPercent');
       syncQuickButtons(pct);
 
-      var tw = document.getElementById('targetWeight');
       var ttl = document.getElementById('totalToLose');
       var wl = document.getElementById('weightLost');
       var pl = document.getElementById('percentLost');
@@ -331,18 +355,24 @@
       var wr = document.getElementById('weeklyRate');
 
       // ---- module 1 ----
-      var target = null;
-      if (start > 0) {
-        target = r1(start * (1 - pct / 100));
-        tw.textContent = target + ' ' + u();
+      var target = parseFloat(targetInput.value);
+      if (!(target > 0)) target = null;
+
+      if (start > 0 && target !== null) {
         ttl.textContent = r1(start - target) + ' ' + u();
       } else {
-        tw.textContent = '—';
         ttl.textContent = '—';
       }
 
+      // show the exact percentage the entered target represents
+      if (start > 0 && target !== null && target < start) {
+        pctOut.textContent = r1((start - target) / start * 100) + '%';
+      } else {
+        pctOut.textContent = pct + '%';
+      }
+
       // ---- module 2 ----
-      if (!(start > 0) || !(current > 0)) {
+      if (!(start > 0) || !(current > 0) || target === null) {
         wl.textContent = '—';
         pl.textContent = '—';
         tl.textContent = '—';
@@ -375,10 +405,11 @@
       }
     }
 
-    startInput.addEventListener('input', update);
+    startInput.addEventListener('input', applyPercent);
+    targetInput.addEventListener('input', applyTarget);
     currentInput.addEventListener('input', update);
     weeksInput.addEventListener('input', update);
-    goalSlider.addEventListener('input', update);
+    goalSlider.addEventListener('input', applyPercent);
     update();
   </script>
 </body>

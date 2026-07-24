@@ -187,6 +187,22 @@
       margin-top: 9px;
     }
 
+    .row3 {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+      gap: 8px;
+    }
+
+    .bmi-chip {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 20px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
     .subnote {
       font-size: 12px;
       color: rgba(87,6,140,0.75);
@@ -221,6 +237,19 @@
           <label for="targetWeight">Target weight</label>
           <input type="number" id="targetWeight" inputmode="decimal" placeholder="lbs" />
         </div>
+      </div>
+
+      <div id="heightImperial" style="margin-top: 9px;">
+        <label>Height</label>
+        <div class="row3">
+          <input type="number" id="heightFt" inputmode="numeric" placeholder="ft" />
+          <input type="number" id="heightIn" inputmode="numeric" placeholder="in" />
+        </div>
+      </div>
+
+      <div id="heightMetric" style="margin-top: 9px; display: none;">
+        <label for="heightCm">Height</label>
+        <input type="number" id="heightCm" inputmode="numeric" placeholder="cm" />
       </div>
 
       <div class="button-group">
@@ -278,11 +307,49 @@
       </div>
     </div>
 
+    <!-- MODULE 3 — BMI -->
+    <div class="module">
+      <div class="module-title">3 · BMI</div>
+
+      <div class="cards2" style="margin-top: 0;">
+        <div class="card">
+          <div class="card-label">Starting BMI</div>
+          <div class="card-value">
+            <span id="bmiStart">—</span><span class="bmi-chip" id="bmiStartCat" style="display:none;"></span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-label">Current BMI</div>
+          <div class="card-value">
+            <span id="bmiNow">—</span><span class="bmi-chip" id="bmiCat" style="display:none;"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cards2">
+        <div class="card" style="grid-column: 1 / -1;">
+          <div class="card-label">Weight at BMI 25</div>
+          <div class="card-value" id="bmi25Weight">—</div>
+        </div>
+      </div>
+
+      <div class="cards2">
+        <div class="card card-primary" style="grid-column: 1 / -1;">
+          <div class="card-label" id="bmiGapLabel">To reach BMI 25</div>
+          <div class="card-value" id="bmiGap">—</div>
+          <div class="subnote" id="bmiNote" style="display:none;"></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <script>
     var startInput   = document.getElementById('startWeight');
     var targetInput  = document.getElementById('targetWeight');
+    var ftInput      = document.getElementById('heightFt');
+    var inInput      = document.getElementById('heightIn');
+    var cmInput      = document.getElementById('heightCm');
     var currentInput = document.getElementById('currentWeight');
     var weeksInput   = document.getElementById('weeks');
     var goalSlider   = document.getElementById('goalSlider');
@@ -297,6 +364,23 @@
       [startInput, targetInput, currentInput].forEach(function (el) {
         if (el.value !== '') el.value = r1(parseFloat(el.value) * f);
       });
+      // height: convert between ft/in and cm
+      if (unit === 'kg') {
+        var totIn = (parseFloat(ftInput.value) || 0) * 12 + (parseFloat(inInput.value) || 0);
+        if (totIn > 0) cmInput.value = Math.round(totIn * 2.54);
+        document.getElementById('heightImperial').style.display = 'none';
+        document.getElementById('heightMetric').style.display = 'block';
+      } else {
+        var cm = parseFloat(cmInput.value);
+        if (cm > 0) {
+          var ti = cm / 2.54;
+          ftInput.value = Math.floor(ti / 12);
+          inInput.value = Math.round(ti % 12);
+        }
+        document.getElementById('heightImperial').style.display = 'block';
+        document.getElementById('heightMetric').style.display = 'none';
+      }
+
       currentUnit = unit;
       startInput.placeholder = unit;
       targetInput.placeholder = unit;
@@ -354,6 +438,8 @@
       var tl = document.getElementById('toLose');
       var wr = document.getElementById('weeklyRate');
 
+      updateBmi();
+
       // ---- module 1 ----
       var target = parseFloat(targetInput.value);
       if (!(target > 0)) target = null;
@@ -405,11 +491,110 @@
       }
     }
 
+    // ---- BMI ----
+    function heightMeters() {
+      if (currentUnit === 'kg') {
+        var cm = parseFloat(cmInput.value);
+        return cm > 0 ? cm / 100 : null;
+      }
+      var ft = parseFloat(ftInput.value) || 0;
+      var inch = parseFloat(inInput.value) || 0;
+      var totIn = ft * 12 + inch;
+      return totIn > 0 ? totIn * 0.0254 : null;
+    }
+
+    function toKg(w) { return currentUnit === 'kg' ? w : w * 0.453592; }
+    function fromKg(w) { return currentUnit === 'kg' ? w : w * 2.20462; }
+
+    function bmiCategory(b) {
+      if (b < 18.5) return ['Under', '#8a6d1f', '#f5e6b8'];
+      if (b < 25)   return ['Normal', '#1d6b3a', '#c8e6d0'];
+      if (b < 30)   return ['Over', '#8a4a1f', '#f5d9c0'];
+      return ['Obese', '#8a1f1f', '#f5c8c8'];
+    }
+
+    function paintChip(el, b) {
+      var cat = bmiCategory(b);
+      el.textContent = cat[0];
+      el.style.color = cat[1];
+      el.style.background = cat[2];
+      el.style.display = 'inline-block';
+    }
+
+    function updateBmi() {
+      var h = heightMeters();
+      var current = parseFloat(currentInput.value);
+      var start = parseFloat(startInput.value);
+      var w = current;
+
+      var bmiStart = document.getElementById('bmiStart');
+      var bmiStartCat = document.getElementById('bmiStartCat');
+      var bmiNow = document.getElementById('bmiNow');
+      var bmiCat = document.getElementById('bmiCat');
+      var bmi25W = document.getElementById('bmi25Weight');
+      var bmiGap = document.getElementById('bmiGap');
+      var bmiGapLabel = document.getElementById('bmiGapLabel');
+      var bmiNote = document.getElementById('bmiNote');
+
+      if (!h) {
+        bmiStart.textContent = '—';
+        bmiStartCat.style.display = 'none';
+        bmiNow.textContent = '—';
+        bmiCat.style.display = 'none';
+        bmi25W.textContent = '—';
+        bmiGap.textContent = '—';
+        bmiNote.style.display = 'none';
+        return;
+      }
+
+      // weight at BMI 25 always available once height is known
+      var w25 = fromKg(25 * h * h);
+      bmi25W.textContent = r1(w25) + ' ' + u();
+
+      // starting BMI
+      if (start > 0) {
+        var bStart = toKg(start) / (h * h);
+        bmiStart.textContent = r1(bStart);
+        paintChip(bmiStartCat, bStart);
+      } else {
+        bmiStart.textContent = '—';
+        bmiStartCat.style.display = 'none';
+      }
+
+      if (!(w > 0)) {
+        bmiNow.textContent = '—';
+        bmiCat.style.display = 'none';
+        bmiGap.textContent = '—';
+        bmiNote.style.display = 'none';
+        return;
+      }
+
+      var b = toKg(w) / (h * h);
+      bmiNow.textContent = r1(b);
+
+      paintChip(bmiCat, b);
+
+      var gap = r1(w - w25);
+      if (gap <= 0) {
+        bmiGapLabel.textContent = 'BMI 25 threshold';
+        bmiGap.textContent = 'Already below';
+        bmiNote.style.display = 'none';
+      } else {
+        bmiGapLabel.textContent = 'To reach BMI 25';
+        bmiGap.textContent = gap + ' ' + u();
+        bmiNote.innerHTML = 'That is ' + r1(gap / w * 100) + '% of current weight. BMI 25 is the top of the normal range, not a recommended target.';
+        bmiNote.style.display = 'block';
+      }
+    }
+
     startInput.addEventListener('input', applyPercent);
     targetInput.addEventListener('input', applyTarget);
     currentInput.addEventListener('input', update);
     weeksInput.addEventListener('input', update);
     goalSlider.addEventListener('input', applyPercent);
+    ftInput.addEventListener('input', update);
+    inInput.addEventListener('input', update);
+    cmInput.addEventListener('input', update);
     update();
   </script>
 </body>
